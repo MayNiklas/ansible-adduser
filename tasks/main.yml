@@ -1,2 +1,31 @@
 ---
 # tasks file for ansible-adduser
+
+- name: Add the user '{{user_name}}' with a bash shell
+  become: true
+  user:
+    name: "{{user_name}}"
+    groups: sudo,users
+    append: yes
+    update_password: on_create
+    password: "{{user_password}}"
+    shell: /usr/bin/bash
+
+- name: Set authorized keys taken from GitHub
+  become: true
+  authorized_key:
+    user: "{{user_name}}"
+    state: present
+    key: https://github.com/{{github_user}}.keys
+
+- name: Copy sudo without password
+  become: true  
+  template: 
+    src: nopasswd.j2
+    dest: /etc/sudoers.d/010_{{user_name}}-nopasswd
+    owner: root
+    group: root
+    mode: 0600
+    force: no
+  when: sudo_without_pw
+  

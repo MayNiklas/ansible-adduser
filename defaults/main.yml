@@ -1,2 +1,6 @@
 ---
 # defaults file for ansible-adduser
+
+sudo_without_pw: false
+user_name: nik
+github_user: MayNiklas
